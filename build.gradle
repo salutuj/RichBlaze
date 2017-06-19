@@ -13,8 +13,7 @@ apply plugin: 'java-library'
 apply plugin: 'eclipse-wtp'
 apply plugin: 'groovy'
 apply plugin: 'war'
-//apply plugin: 'com.bmuschko.tomcat'
-apply plugin: 'com.bmuschko.cargo'
+apply plugin: 'com.bmuschko.cargo-base'
 
 
 //def tomcatVersion = '8.0.44'
@@ -25,7 +24,8 @@ war {
   baseName = 'RichBlaze'
   version = '0.1.0' 
 }
-def warLocation = "build/libs/war.baseName-war.version.war"
+
+def warLocation = "${projectDir}/build/libs/${war.baseName}-${war.version}.war"
 project.webAppDirName = 'webapp'
 
 // In this section you declare where to find the dependencies of your project
@@ -50,26 +50,11 @@ dependencies {
     compileOnly 'javax.servlet.jsp:javax.servlet.jsp-api:2.3.1'    
   
     testImplementation 'junit:junit:4.7' 
-    
-  //  tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
-  //         "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}",
-  //         "org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}"
-           
-    
+
 }
 
-task cleanLocalhostWebappir(type: Delete){
-    //delete fileTree(dir: local_Tomcat_webapps_dir)
-//    delete fileTree(dir: 'C:\\Tomcat7.0\\webapps')
-}
-
-task deployToLocalhost(type: com.bmuschko.gradle.cargo.tasks.remote.CargoRedeployRemote) {
-  containerId = "tomcat8x"
-    hostname = 'localhost'
-    port = 8080
-    username = "tomcat"
-    password = "tomcat"
-    deployables = [new com.bmuschko.gradle.cargo.convention.Deployable(file: file(warLocation), context: war.baseName)]
-    jvmargs = -Xmx256m
-    //start.jvmargs = -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000
+task deployToLocalhost(type: com.bmuschko.gradle.cargo.tasks.local.CargoRedeployLocal) {
+    containerId = 'tomcat8x'
+    homeDir = file('E:\\AFTERWORK\\PROJ\\tomcat8\\apache-tomcat-8.0.44')
+    deployables = [new com.bmuschko.gradle.cargo.convention.Deployable(file: file(warLocation), context: war.baseName)]  
 }
